@@ -1,3 +1,5 @@
+package Deperecated;
+
 import org.json.simple.JSONObject;
 
 import java.util.Scanner;

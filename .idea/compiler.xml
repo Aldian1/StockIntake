@@ -4,6 +4,7 @@
     <bytecodeTargetLevel>
       <module name="OkHttpPratice_main" target="1.8" />
       <module name="OkHttpPratice_test" target="1.8" />
+      <module name="StockIntake_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
