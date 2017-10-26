@@ -11,11 +11,11 @@ import java.time.LocalTime;
 public class JsonProcessor {
 
     private JSONObject currentOpen;
-    private DataHolder dh;
+   // private DataHolder dh;
 
     public JsonProcessor() {
         currentOpen = new JSONObject();
-        dh = new DataHolder();
+        //dh = new DataHolder();
     }
 
 
@@ -47,12 +47,12 @@ public class JsonProcessor {
             sb.append(":00");
             JSONObject j = (JSONObject) parent.get(sb.toString());
             if(j != null) {
-                dh.setCurrentOpen(sb.toString(), j.get("1. open").toString());
+                //dh.setCurrentOpen(sb.toString(), j.get("1. open").toString());
             }
         }
 
         System.out.println("Current Open Object: ");
-        System.out.println(dh.getCurrentOpen());
+       // System.out.println(dh.getCurrentOpen());
         return timeValues;
     }
 }

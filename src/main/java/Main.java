@@ -2,9 +2,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.Format;
 import java.time.LocalTime;
 import java.util.*;
-
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +17,7 @@ public class Main {
     private DisplayHandler displayHandler;
     private String[] mockMessageURL = new String[2];
     private final String apikKey = "apikey=IYI4AYG8YGKDQEGB";
-    Map<String, Double> portfolio = new HashMap<String, Double>();
+    private Map<String, Double> portfolio = new HashMap<String, Double>();
 
     public Main() {
         printer = new Printer();
@@ -33,24 +33,30 @@ public class Main {
         Main m = new Main();
     }
 
+    //TODO: Use list not array
+    //TODO: Use string builder to construct the message
+    //TODO: Use string builder to construct the url
+    //TODO: Convert this into a command so the user can dynamically change there portfolio
+
     private void onEntry() {
         printer.printMessage("Getting latest data");
-        double lastValue = 0;
         LocalTime lastTimeStamp = timeKeeper.getCurrentTime();
-        //TODO: Convert this into a command so the user can dynamically change there portfolio
-        portfolio.put("SNAP", (double) 0);
-        portfolio.put("FB", (double) 0);
-        portfolio.put("GOOGL", (double) 0);
-        List<String> keys = new ArrayList<>(portfolio.keySet());
+
+        portfolio.put("SNAP", 0D);
+        portfolio.put("FB", 0D);
+        portfolio.put("GOOGL", 0D);
+        portfolio.put("BT.A", 0D);
+
         while (true) {
             printer.printMessage("Last update was at : " + timeKeeper.getCurrentDateTimeString());
             printer.printMessage("Current tracked portfolio: ");
-            for (int i = 0; i < portfolio.size(); i++) {
+            for (String key : portfolio.keySet()) {
                 try {
-                    String latestData = getLatestDataFromURL(mockMessageURL[0] + keys.get(i) + mockMessageURL[1] + apikKey);
-                    double currentValue = doDataConversions(latestData, keys.get(i));
-                    printMessages(currentValue, lastValue, keys.get(i));
-                    Thread.sleep(1000);
+                    String finalizedURL = String.format("%s%s%s%s", mockMessageURL[0], key, mockMessageURL[1], apikKey);
+                    String latestData = getLatestDataFromURL(finalizedURL);
+                    double currentValue = doDataConversions(latestData, key);
+                    printer.printStockData(currentValue, portfolio.get(key), key);
+                    portfolio.put(key, currentValue);
                 } catch (ParseException | IOException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -60,17 +66,6 @@ public class Main {
 
     private double doDataConversions(String latestData, String symbol) throws IOException, ParseException, InterruptedException {
         return extractData(latestData, symbol);
-    }
-
-    private void printMessages(double currentValue, double lastValue, String symbol) {
-        if (currentValue != 0) {
-            if (currentValue >= portfolio.get(symbol)) {
-                printer.printSpecialMessage(symbol + " Stock: " + currentValue, Colors.ANSI_GREEN);
-            } else {
-                printer.printSpecialMessage("\033[1m" + symbol + " Stock: " + currentValue + "\033[0m", Colors.ANSI_RED);
-            }
-            portfolio.put(symbol, currentValue);
-        }
     }
 
     private double extractData(String latestData, String symbol) throws ParseException, InterruptedException {
@@ -90,11 +85,21 @@ public class Main {
     }
 
     private String getLatestDataFromURL(String URL) throws IOException {
-        URL ur = null;
-        ur = new URL(URL);
-        URLConnection conn = ur.openConnection();
-        InputStream is = conn.getInputStream();
-        return new Scanner(is).useDelimiter("\\A").next();
+        InputStream is = null;
+        try {
+            URL ur = null;
+            ur = new URL(URL);
+            URLConnection conn = ur.openConnection();
+            is = conn.getInputStream();
+            return new Scanner(is).useDelimiter("\\A").next();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+        return null;
     }
 }
 

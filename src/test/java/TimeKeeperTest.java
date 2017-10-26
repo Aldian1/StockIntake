@@ -1,4 +1,3 @@
-import Deperecated.TimeKeeper;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ public class TimeKeeperTest {
     public void getCurrentDateTime() throws Exception {
         LocalDateTime now = LocalDateTime.now();
         now = now.minusHours(5);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:00");
         assertEquals(now.format(formatter),timeKeeper.getCurrentDateTimeString());
     }
 }
