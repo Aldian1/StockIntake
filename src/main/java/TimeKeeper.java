@@ -19,9 +19,4 @@ public class TimeKeeper {
         now.format(formatter);
         return LocalTime.from(now);
     }
-
-
-    public void incrementTime(Integer minutes) {
-
-    }
 }

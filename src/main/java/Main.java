@@ -14,18 +14,20 @@ import org.json.simple.parser.ParseException;
 public class Main {
     private Printer printer;
     private TimeKeeper timeKeeper;
-    private DisplayHandler displayHandler;
     private String[] mockMessageURL = new String[2];
     private final String apikKey = "apikey=IYI4AYG8YGKDQEGB";
     private Map<String, Double> portfolio = new HashMap<String, Double>();
+    private boolean userInputting;
+    private UserInput userInput;
 
     public Main() {
         printer = new Printer();
         timeKeeper = new TimeKeeper();
-        displayHandler = new DisplayHandler();
+        userInput = new UserInput();
         //default stock
         mockMessageURL[0] = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=";
         mockMessageURL[1] = "&interval=1min&";
+        userInputting = true;
         onEntry();
     }
 
@@ -39,6 +41,7 @@ public class Main {
     //TODO: Convert this into a command so the user can dynamically change there portfolio
 
     private void onEntry() {
+        loadData();
         printer.printMessage("Getting latest data");
         LocalTime lastTimeStamp = timeKeeper.getCurrentTime();
 
@@ -46,6 +49,28 @@ public class Main {
         portfolio.put("FB", 0D);
         portfolio.put("GOOGL", 0D);
         portfolio.put("BT.A", 0D);
+
+        while (userInputting) {
+            printer.printMessage("We are currently tracking: ");
+            for (String key : portfolio.keySet()) {
+                printer.printMessage(key);
+            }
+            printer.printMessage("Would you like to add a new item to your portfolio?");
+            printer.printMessage("Please enter (Yes/No)");
+            String answer = userInput.readUserInput();
+            if (answer.equals("Yes") || answer.equals("yes") || answer.equals("y")) {
+                printer.printMessage("Enter stock key");
+                String newCode = userInput.readUserInput();
+                portfolio.put(newCode, 0D);
+                userInputting = false;
+                //TODO: Perform lookup
+            } else if (answer.equals("No") || answer.equals("no") || answer.equals("n")) {
+                printer.printMessage("Entering tracker");
+                userInputting = false;
+            } else {
+                printer.printMessage("Invalid answer");
+            }
+        }
 
         while (true) {
             printer.printMessage("Last update was at : " + timeKeeper.getCurrentDateTimeString());
@@ -63,6 +88,10 @@ public class Main {
             }
         }
     }
+
+    private void loadData() {
+    }
+
 
     private double doDataConversions(String latestData, String symbol) throws IOException, ParseException, InterruptedException {
         return extractData(latestData, symbol);
@@ -99,7 +128,7 @@ public class Main {
                 is.close();
             }
         }
-        return null;
+        return "No data recieved";
     }
 }
 

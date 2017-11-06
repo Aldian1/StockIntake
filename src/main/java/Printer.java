@@ -1,12 +1,10 @@
-public class Printer implements IDisplayHandler {
+public class Printer {
 
     public void printMessage(String message) {
         System.out.println(Colors.ANSI_WHITE + message);
     }
 
-    public void printSpecialMessage(String message, String color) {
-        System.out.println(color + message);
-    }
+    public void printSpecialMessage(String message, String color) { System.out.println(color + message); }
 
 
     public void printStockData(double currentValue, double lastValue, String symbol) {
@@ -20,26 +18,5 @@ public class Printer implements IDisplayHandler {
         } else {
             printSpecialMessage(symbol + " offline [stock market not open]", Colors.ANSI_YELLOW);
         }
-    }
-
-
-    @Override
-    public void dataUpdated(Object data) {
-
-    }
-
-    @Override
-    public void clearScreen() {
-
-    }
-
-    @Override
-    public void newDisplay() {
-
-    }
-
-    @Override
-    public void updateField() {
-
     }
 }

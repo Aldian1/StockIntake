@@ -21,6 +21,7 @@ public class JsonProcessorTest {
 
     @Test
     public void extractSymbolPrice() throws Exception {
+
     }
 
     @Test
